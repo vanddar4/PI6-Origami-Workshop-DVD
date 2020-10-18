@@ -27,6 +27,7 @@ class Register extends React.Component{
                 email:"",
                 password:"",
                 rePassword:"",
+                submit:""
             }
         }
         this.handleInputChange= this.handleInputChange.bind(this);
@@ -97,7 +98,7 @@ class Register extends React.Component{
                 }
                 break;
             case "rePassword":
-                if(newStateVal === this.state.password){
+                if(newStateVal !== this.state.password){
                     this.setState(prevState => ({
                         error: {                   
                             ...prevState.error,    
@@ -120,13 +121,34 @@ class Register extends React.Component{
         }
     }
 
-
+    componentDidMount() {
+        if(document.cookie.indexOf("x-auth-token") !== -1){
+            this.props.history.push("/404");
+        }
+    }
 
     submitHandler(event){
         event.preventDefault();
         if(formIsValid(this.state.error)){
         // fetch();//<--definetly happening     
             console.log("fetch");
+            createUser(this.state.email,this.state.password).then(data=>{
+                if(data){
+                    this.props.history.push("/login");
+               
+                }
+                else{
+                    console.log("Registration error");
+                    let error = this.state.error;
+                    this.setState(prevState => ({
+                        error: {                   
+                            ...prevState.error,    
+                            "submit": "There was an error in your submission, please try again."      
+                        }
+                    }));
+                }
+                
+            });
             //this.history.push("/login")
         }
         else{
@@ -163,6 +185,8 @@ class Register extends React.Component{
                     </div>
                     <div className="form-control">
                         <button type="submit">Register</button>
+                        {error.submit.length > 0 && 
+                            <span className='error'>{error.submit}</span>}
                     </div>
                     
                 </form>

@@ -4,6 +4,8 @@ const { auth } = require('../utils');
 
 router.get('/', controllers.origami.get);
 
+router.post('/user', auth(), controllers.origami.getUser);
+
 router.post('/', auth(), controllers.origami.post);
 
 router.put('/:id', auth(), controllers.origami.put);

@@ -41,7 +41,8 @@ class Login extends React.Component{
     }
 
     registerValidator(data){
-        let email = data.author;
+            //console.log(data);
+        let email = data.email;
         let errors = this.state.error;
         if(!email){
             this.setState(prevState => ({
@@ -69,19 +70,41 @@ class Login extends React.Component{
         
         
     }
+    componentDidMount() {
+        if(document.cookie.indexOf("x-auth-token") !== -1){
+            this.props.history.push("/404");
+        }
+    }
 
 
 
     submitHandler(event){
         event.preventDefault();
-        console.log("fetch");
+        //console.log("fetch");
         //then validate
-        this.registerValidator(event);
+       // this.registerValidator(event);
         //check if any errors
-        //if(errors)
-        // do nothin
-        //redirect
-            //this.history.push("/post")
+        if(this.state.error.email =="" &&this.state.error.password ==""){
+            //console.log("valid");
+            loginUser(this.state.email,this.state.password).then(res=>{
+                //console.log("back")
+                console.log(document.cookie.indexOf("x-auth-token"));
+                console.log(document.cookie.indexOf("x-auth-token") !== -1);
+
+                if(document.cookie.indexOf("x-auth-token") === -1&& (typeof res == "string" || res == undefined)){
+                    //error
+                }else{
+                   // console.log("logged in!");
+                   // take token's value or bool of its being there 
+                    // set it in some global object
+                    this.props.history.push("/post");
+                }
+
+            })
+            //redirect
+            //
+        }
+        
        
     }
     render(){
@@ -92,7 +115,7 @@ class Login extends React.Component{
                 <form onSubmit={this.submitHandler}>
                     <div className="form-control">
                         <label>Email</label>
-                        <input type="email" name="email" id="email" onChange={this.handleInputChange}/>
+                        <input type="text" name="email" id="email" onChange={this.handleInputChange}/>
                         <br/>
                         {error.email.length > 0 && 
                             <span className='error'>{error.email}</span>}

@@ -7,6 +7,16 @@ module.exports = {
             .catch(next);
     },
 
+    getUser: (req, res, next) => {
+        console.log("getting user")
+        const { _id } = req.user;
+        models.Origami.find({
+            author:_id
+        })
+            .then((origamies) => res.send(origamies))
+            .catch(next);
+    },
+
     post: (req, res, next) => {
         const { description } = req.body;
         const { _id } = req.user;
@@ -19,7 +29,7 @@ module.exports = {
                 ]);
             })
             .then(([modifiedObj, origamiObj]) => {
-                res.send(origamiObj);
+                res.status(201).send(origamiObj);
             })
             .catch(next);
     },
